@@ -64,7 +64,7 @@ venv\Scripts\activate
 
 ### 3️⃣ Install dependencies
 
-pip install -r requirements.txt
+pip install -r requirements.txt or pip3 install -r requirements.txt
 
 Dependencies used:
 - bcrypt
