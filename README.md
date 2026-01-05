@@ -46,7 +46,6 @@ All player and admin passwords are stored **only as hashes**, never in clear tex
 ### 1️⃣ Clone the repository
 
 git clone https://github.com/d-mothes/black-jack-py.git
-unzip black-jack-py.zip
 cd black-jack-py
 
 ---
