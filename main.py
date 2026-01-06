@@ -127,11 +127,16 @@ while True: # boucle infinie : menu principal qui tourne tant que le programme n
             else: # si un joueur est déjà sélectionné, on demande si on garde le même
                 clear()
                 print(TEXTS["intro"] + "\n")
-                reset_sess = str(input("Souhaitez vous jouer avec le meme joueur ? (o/n) : "))
-                if reset_sess == "n": # si non -> reset session + sélection d'un autre joueur
+                reset_sess = str(input("Souhaitez vous jouer avec le meme joueur ? (o/n) : ")).strip().upper()
+                if reset_sess == "N": # si non -> reset session + sélection d'un autre joueur
                     reset_session()
                     select_player()
-            os.system("python3 lib/game.py") # lancement du jeu
+                    os.system("python3 lib/game.py") # lancement du jeu
+                elif reset_sess == "O":
+                    os.system("python3 lib/game.py") # lancement du jeu
+                else:
+                    message_erreur()
+                    
 
 
     # ----------- Solde -----------
