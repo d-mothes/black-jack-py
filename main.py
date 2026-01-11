@@ -7,6 +7,8 @@ import subprocess
 import sys
 import json
 import bcrypt
+import getpass
+from getpass import getpass
 
 # =============== Programmes ===============
 from lib.texts import TEXTS # dictionnaire de textes
@@ -39,7 +41,7 @@ def create_first_player(): # fonction pour créer un premier joueur si la data e
     print(TEXTS["intro"] + "\n" "Création d'un premier joueur :" + "\n")
     # récupération du username et mot de passe brut
     username = str(input("Username :")).strip()
-    password_brut = str(input("Password :")).strip()
+    password_brut = getpass(("Password :").strip()
     # hash du mot de passe
     hashed_password = bcrypt.hashpw(password_brut.encode(), bcrypt.gensalt())
     password_brut = "" # on efface la variable en mémoire
@@ -73,7 +75,7 @@ def select_player(): # fonction pour sélectionner un joueur
     # tant que le mot de passe n'est pas bon, on redemande
     # bcrypt.checkpw() compare un mot de passe brut à un hash
     while not bcrypt.checkpw(confirm.encode(), joueur["password"].encode()):
-        confirm = str(input(f"Pour confirmer, tapez le mot de passe de ({joueur['username']}) :")).strip()
+        confirm = getpass(f"Pour confirmer, tapez le mot de passe de ({joueur['username']}) :").strip()
         clear()
         print(TEXTS["intro"] + "\n")
         # si incorrect : on diminue les tentatives
