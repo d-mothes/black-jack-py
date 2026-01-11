@@ -1,8 +1,8 @@
-# 🎴 Blackjack en terminal – Python
+# 🎴 Blackjack dans terminal – Python
 
 ## 📌 Présentation du projet
 
-Ce projet est un **jeu de Blackjack en terminal** développé en **Python** dans le cadre de mes **études en informatique**.
+Ce projet est un **jeu de Blackjack dans le terminal** développé en **Python** dans le cadre de mes **études en informatique**.
 
 Initialement conçu pour répondre à des exigences scolaires de base, j’ai volontairement **étendu et amélioré le projet** afin de :
 - renforcer mes compétences en Python
