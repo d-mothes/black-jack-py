@@ -161,18 +161,18 @@ while True: # boucle infinie : menu principal qui tourne tant que le programme n
     # ----------- Quitter -----------
     elif choice_menu == "4":
         choice_exit = "a" # valeur impossible au départ
-        while choice_exit != "n": # boucle de confirmation : on force l'utilisateur à répondre o/n
+        while choice_exit != "N": # boucle de confirmation : on force l'utilisateur à répondre o/n
             clear()
             print(TEXTS["intro"] + "\n")
-            choice_exit = str(input("Souhaitez vous vraiment quitter ? (o/n) : ")).strip()
-            if choice_exit == "o":
+            choice_exit = str(input("Souhaitez vous vraiment quitter ? (o/n) : ")).strip().upper()
+            if choice_exit == "O":
                 reset_session() # on reset la session avant de quitter pour les prochains lancements
                 clear()
                 print(TEXTS["exit"])
                 time.sleep(1.8)
                 clear()
                 sys.exit() # sortie du programme
-            elif choice_exit == "n": # annule quitter -> retour au menu principal
+            elif choice_exit == "N": # annule quitter -> retour au menu principal
                 clear()
             else: # mauvaise saisie -> message d'erreur
                 message_erreur()
