@@ -41,7 +41,7 @@ def create_first_player(): # fonction pour créer un premier joueur si la data e
     print(TEXTS["intro"] + "\n" "Création d'un premier joueur :" + "\n")
     # récupération du username et mot de passe brut
     username = str(input("Username :")).strip()
-    password_brut = getpass(("Password :").strip()
+    password_brut = getpass("Password :").strip()
     # hash du mot de passe
     hashed_password = bcrypt.hashpw(password_brut.encode(), bcrypt.gensalt())
     password_brut = "" # on efface la variable en mémoire
