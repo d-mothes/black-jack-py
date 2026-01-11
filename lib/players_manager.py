@@ -43,7 +43,7 @@ def create_player(): # fonction pour créer un joueur
     global data
     clear()
     print(TEXTS["intro_solde"] + "\n")
-    username = getpass("Username :").strip()
+    username = str(input("Username :")).strip()
     # liste des pseudos déjà existants pour éviter les doublons
     existing_usernames = [player["username"] for player in data["players"]]
     # si le username existe déjà, on ajoute 1, 2, 3 etc. à la fin
