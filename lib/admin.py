@@ -1,6 +1,8 @@
 import os
 import subprocess
 import json
+import getpass
+from getpass import getpass
 
 with open("lib/data.json", "r", encoding="utf-8") as f:
     data = json.load(f)
@@ -37,7 +39,7 @@ def delete_player(): #fonction pour supprimer un joueur
     print(f"\nLe joueur '{joueur['username']}' a été supprimé.")
 
 
-mdp = str(input("mot de passe admin :"))
+mdp = getpass("mot de passe admin :")
 if mdp == "Admin1234" :
     cmd = "cls" if os.name == "nt" else "clear"
     subprocess.call(cmd, shell=True)
