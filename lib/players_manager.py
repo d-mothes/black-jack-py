@@ -27,23 +27,30 @@ def clear(): # fonction pour clear le terminal
     cmd = "cls" if os.name == "nt" else "clear"
     subprocess.call(cmd, shell=True) # exécute la commande dans le shell
 
-def message_erreur(): # afficher un message erreur
-    clear()
-    print(TEXTS["message_erreur"] + "\n")
-    time.sleep(0.9)
-    clear()
-
 def save_json(path, obj): # fonction pour enregistrer dans un fichier JSON
     # path : chemin du fichier
     # obj  : dictionnaire python à sauvegarder
     with open(path, "w", encoding="utf-8") as f:
         json.dump(obj, f, ensure_ascii=False, indent=4)
 
+def affichage_joueur(): # affiche les joueurs
+    print(TEXTS["intro_solde"] + "\n" + "Joueur(s) enregisté(s) :" + "\n")  # menu
+    if len(data["players"]) == 0:  # si pas de joueur erreur
+        print("Aucun joueur enregistré")
+    for i, player in enumerate(data["players"], start=1):  # affichage des joueurs
+        print(f"[{i}] {player['username']} (solde: {player['solde']} $)")
+    print("")
+
 def create_player(): # fonction pour créer un joueur
     global data
     clear()
     print(TEXTS["intro_solde"] + "\n")
     username = str(input("Username :")).strip()
+    while len(username) <= 3 : # gestion erreur username
+        clear()
+        print(TEXTS["intro_solde"] + "\n")
+        print("Veuillez entrer un nom dutilisateur de plus de 3 caracteres")
+        username = str(input("Username :")).strip().lower()
     # liste des pseudos déjà existants pour éviter les doublons
     existing_usernames = [player["username"] for player in data["players"]]
     # si le username existe déjà, on ajoute 1, 2, 3 etc. à la fin
@@ -56,6 +63,11 @@ def create_player(): # fonction pour créer un joueur
         username = new_name # username final unique
     # saisie mot de passe brut puis hash
     password_brut = getpass("Password :").strip()
+    while len(password_brut) <= 4 : # gestion erreur mot de passe
+        clear()
+        print(TEXTS["intro_solde"] + "\n")
+        print("Veuillez entrer un mot de passe de plus de 4 caracteres")
+        password_brut = getpass("Password :").strip()
     hashed_password = bcrypt.hashpw(password_brut.encode(), bcrypt.gensalt())
     password_brut = ""  # on efface la variable en mémoire
     # construction du nouveau joueur sous forme de dictionnaire
@@ -77,7 +89,20 @@ def create_player(): # fonction pour créer un joueur
 def delete_player(): # fonction pour supprimer un joueur
     global data
     # on demande le numéro (affiché) du joueur à supprimer
-    choice_delete = int(input("\n" + "id du joueur à supprimer :"))
+    max_id = len(data["players"])
+    while True : # gestion des erreurs
+        try :
+            choice_delete = int(input("id du joueur à supprimer :"))
+            if 1 <= choice_delete <= max_id :
+                break
+            else:
+                clear()
+                affichage_joueur()
+                print(f"Erreur, Selectionnez un id entre 1 et {max_id}")
+        except ValueError:
+            clear()
+            affichage_joueur()
+            print("Erreur, Selectionnez un bonne id")
     choice_delete -= 1 # passage en index Python
     joueur = data["players"][choice_delete] # on récupère le joueur correspondant
     clear()
@@ -152,14 +177,10 @@ def classement(): # fonction pour classer les joueurs
 
 
 # =============== Main ===============
-choice_solde = "n" # valeur impossible pour forcer la boucle
+choice_solde = "" # valeur impossible pour forcer la boucle
 while choice_solde != "4" : # boucle tant que l'utilisateur n'a pas choisi "4" (quitter)
     clear()
-    print(TEXTS["intro_solde"] + "\n" + "Joueur(s) enregisté(s) :" + "\n") # menu
-    if len(data["players"]) == 0: # si pas de joueur erreur
-        print("Aucun joueur enregistré")
-    for i, player in enumerate(data["players"], start=1): # affichage des joueurs
-        print(f"[{i}] {player['username']} (solde: {player['solde']} $)")
+    affichage_joueur()
     print(TEXTS["menu_solde"] + "\n")
     choice_solde = str(input("(solde)$:")).strip()
 
@@ -171,14 +192,10 @@ while choice_solde != "4" : # boucle tant que l'utilisateur n'a pas choisi "4" (
     # ----------- Supprimer joueur -----------
     elif choice_solde == "2" :
         clear()
-        print(TEXTS["intro_solde"] + "\n")
+        affichage_joueur()
         if len(data["players"]) == 0: # si pas de joueur erreur
-            print("Aucun joueur enregistré")
             time.sleep(1.8)
         else:
-            print("Joueur(s) enregisté(s) :" + "\n")
-            for i, player in enumerate(data["players"], start=1): # affichage des joueurs
-                print(f"[{i}] {player['username']} (solde: {player['solde']} $)")
             # lance la procédure de suppression avec mot de passe
             delete_player()
 
@@ -200,7 +217,10 @@ while choice_solde != "4" : # boucle tant que l'utilisateur n'a pas choisi "4" (
 
     # ----------- Erreur -----------
     else :
-        message_erreur() # entrée invalide -> message d'erreur
+        clear()
+        print(TEXTS["intro_solde"])
+        print("Erreur")
+        time.sleep(1.5)
 
 
 # =============== Fin du programme ===============
