@@ -29,6 +29,12 @@ def clear(): # fonction pour clear le terminal
     cmd = "cls" if os.name == "nt" else "clear"
     subprocess.call(cmd, shell=True) # exécute la commande dans le shell
 
+def affichage_joueur(): # affiche les joueurs
+    print(TEXTS["intro"] + "\n" + "Joueur(s) disponible(s) :" + "\n")
+    for i, player in enumerate(data["players"], start=1):  # affichage des joueurs disponibles
+        print(f"[{i}] {player['username']} (solde: {player['solde']} $)")
+    print("")
+
 def save_json(path, obj): # fonction pour enregistrer dans un fichier JSON
     # path : chemin du fichier
     # obj  : dictionnaire python à sauvegarder
@@ -40,8 +46,18 @@ def create_first_player(): # fonction pour créer un premier joueur si la data e
     clear()
     print(TEXTS["intro"] + "\n" "Création d'un premier joueur :" + "\n")
     # récupération du username et mot de passe brut
-    username = str(input("Username :")).strip()
+    username = str(input("Username :")).strip().lower()
+    while len(username) <= 3 : # gestion erreur username
+        clear()
+        print(TEXTS["intro"] + "\n" "Création d'un premier joueur :" + "\n")
+        print("Veuillez entrer un nom dutilisateur de plus de 3 caracteres")
+        username = str(input("Username :")).strip().lower()
     password_brut = getpass("Password :").strip()
+    while len(password_brut) <= 4 : # gestion erreur mot de passe
+        clear()
+        print(TEXTS["intro"] + "\n" "Création du mot de passe :" + "\n")
+        print("Veuillez entrer un mot de passe de plus de 4 caracteres")
+        password_brut = getpass("Password :").strip()
     # hash du mot de passe
     hashed_password = bcrypt.hashpw(password_brut.encode(), bcrypt.gensalt())
     password_brut = "" # on efface la variable en mémoire
@@ -64,11 +80,21 @@ def create_first_player(): # fonction pour créer un premier joueur si la data e
 def select_player(): # fonction pour sélectionner un joueur
     global session_data
     clear()
-    print(TEXTS["intro"] + "\n" + "Joueur(s) disponible(s) :" + "\n")
-    for i, player in enumerate(data["players"], start=1): # affichage des joueurs disponibles
-        print(f"[{i}] {player['username']} (solde: {player['solde']} $)")
-    print("")
-    choice_player = int(input("Selectionnez un joueur (id) :"))
+    affichage_joueur()
+    max_id = len(data["players"])
+    while True : # gestion des erreurs
+        try :
+            choice_player = int(input("Selectionnez un joueur (id) :"))
+            if 1 <= choice_player <= max_id :
+                break
+            else:
+                clear()
+                affichage_joueur()
+                print(f"Erreur, Selectionnez un id entre 1 et {max_id}")
+        except ValueError:
+            clear()
+            affichage_joueur()
+            print("Erreur, Selectionnez un bonne id")
     joueur = data["players"][choice_player - 1] # on récupère le joueur correspondant
     tentative = 3 # sécurité de tentatives (3 essais)
     confirm = ""
@@ -104,12 +130,6 @@ def reset_session(): # reset du joueur sélectionné
     }
     save_json("lib/session.json", session_reset)
 
-def message_erreur(): # afficher un message erreur
-    clear()
-    print(TEXTS["message_erreur"] + "\n")
-    time.sleep(0.9)
-    clear()
-
 
 
 
@@ -126,18 +146,22 @@ while True: # boucle infinie : menu principal qui tourne tant que le programme n
         elif len(data["players"]) > 0: # si au moins un joueur existe -> on doit s'assurer qu'un joueur est sélectionné
             if session_data["selected_player_id"] is None: # si aucun joueur dans la session -> sélectionner
                 select_player()
+                os.system("python3 lib/game.py")
             else: # si un joueur est déjà sélectionné, on demande si on garde le même
                 clear()
                 print(TEXTS["intro"] + "\n")
                 reset_sess = str(input("Souhaitez vous jouer avec le meme joueur ? (o/n) : ")).strip().upper()
+                while reset_sess not in ["O", "N"] :
+                    clear()
+                    print(TEXTS["intro"] + "\n")
+                    print("Erreur veuillez re selectionner")
+                    reset_sess = str(input("Souhaitez vous jouer avec le meme joueur ? (o/n) : ")).strip().upper()
                 if reset_sess == "N": # si non -> reset session + sélection d'un autre joueur
                     reset_session()
                     select_player()
                     os.system("python3 lib/game.py") # lancement du jeu
                 elif reset_sess == "O":
                     os.system("python3 lib/game.py") # lancement du jeu
-                else:
-                    message_erreur()
                     
 
 
@@ -160,11 +184,16 @@ while True: # boucle infinie : menu principal qui tourne tant que le programme n
 
     # ----------- Quitter -----------
     elif choice_menu == "4":
-        choice_exit = "a" # valeur impossible au départ
+        choice_exit = "" # valeur impossible au départ
         while choice_exit != "N": # boucle de confirmation : on force l'utilisateur à répondre o/n
             clear()
             print(TEXTS["intro"] + "\n")
             choice_exit = str(input("Souhaitez vous vraiment quitter ? (o/n) : ")).strip().upper()
+            while choice_exit not in ["O", "N"]:
+                clear()
+                print(TEXTS["intro"] + "\n")
+                print("Erreur veuillez re selectionner")
+                choice_exit = str(input("Souhaitez vous vraiment quitter ? (o/n) : ")).strip().upper()
             if choice_exit == "O":
                 reset_session() # on reset la session avant de quitter pour les prochains lancements
                 clear()
@@ -174,8 +203,6 @@ while True: # boucle infinie : menu principal qui tourne tant que le programme n
                 sys.exit() # sortie du programme
             elif choice_exit == "N": # annule quitter -> retour au menu principal
                 clear()
-            else: # mauvaise saisie -> message d'erreur
-                message_erreur()
 
 
     # ----------- Admin -----------
@@ -189,6 +216,10 @@ while True: # boucle infinie : menu principal qui tourne tant que le programme n
 
     # ----------- Erreur -----------
     else:
-        message_erreur()
+        clear()
+        print(TEXTS["intro"] + "\n")
+        print("Erreur")
+        time.sleep(1.5)
+
 
 # =============== Fin du programme ===============
