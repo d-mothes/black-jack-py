@@ -15,7 +15,7 @@ def save_json(path, obj):
 
 def reset_session():
     session_reset = {
-        "selected_player_id": None
+        "selected_player_id": null
     }
     save_json("lib/session.json", session_reset)
 
